@@ -14,6 +14,21 @@ Una solución robusta y contenerizada para la ingesta de archivos mediante SFTP.
 *   **👀 Watcher Inteligente**: Monitorización recursiva usando `inotify-tools`. Detecta eventos `close_write` para asegurar que el archivo se ha subido completamente.
 *   **⚡ Trigger Automático**: Ejecución inmediata de scripts de carga (`loader.sh`) con inyección de metadatos (Empresa, Sede, Ruta).
 *   **📂 Estructura Dinámica**: Creación automática de usuarios y directorios basada en variables de entorno.
+* **🔋 Baterías Incluidas**: Soporte nativo para Python 3 con drivers para múltiples bases de datos.
+
+---
+
+## 🔌 Bases de Datos Soportadas
+
+El contenedor ya viene pre-instalado con **Python 3** y los siguientes drivers para que tus scripts puedan conectar directo:
+
+| Base de Datos | Driver / Librería | Estado |
+| :--- | :--- | :--- |
+| **Microsoft SQL Server** | `msodbcsql18` + `pyodbc` | ✅ Instalado |
+| **PostgreSQL** | `psycopg2-binary` | ✅ Instalado |
+| **MySQL / MariaDB** | `mysql-connector-python` | ✅ Instalado |
+| **Data Science** | `pandas` | ✅ Instalado |
+| **HTTP Requests** | `requests` | ✅ Instalado |
 
 ---
 

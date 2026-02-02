@@ -10,7 +10,32 @@ RUN apt-get update && apt-get install -y \
     inotify-tools \
     procps \
     locales \
+    curl \
+    gnupg2 \
+    unixodbc \
+    unixodbc-dev \
+    python3 \
+    python3-pip \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
+
+# --- SOPORTE SQL SERVER (Driver ODBC 18) ---
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
+    && curl https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- LIBRERÍAS PYTHON COMUNES ---
+# Se instalan globalmente para que los scripts de usuario las encuentren fácil
+RUN pip3 install --break-system-packages \
+    pyodbc \
+    psycopg2-binary \
+    mysql-connector-python \
+    pymssql \
+    sqlalchemy \
+    pandas \
+    requests
 
 # Configurar SSHD
 RUN mkdir -p /run/sshd
