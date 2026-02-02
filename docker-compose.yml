@@ -1,0 +1,17 @@
+services:
+  sftp_server:
+    build: .
+    container_name: sftp_integrator
+    ports:
+      - "2222:22"
+    environment:
+      # Formato: usuario:contraseña;usuario2:contraseña2
+      # MUY IMPORTANTE: En producción usar secretos o archivo .env
+      - "SFTP_USERS=EmpresaA:password123;EmpresaB:segura456"
+    volumes:
+      # Montar script del host al contenedor (solo lectura por seguridad)
+      - ./loader.sh:/usr/local/bin/loader.sh:ro
+      
+      # Persistencia de datos (opcional, para mantener archivos subidos)
+      # - ./sftp_data:/home
+    restart: unless-stopped
