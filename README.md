@@ -113,7 +113,7 @@ Detectado nuevo archivo: /home/EmpresaA/upload/SedeCentral/data.txt
 
 Este proyecto está optimizado para funcionar nativamente en Railway.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/Kennethguerra3/ServidorSFTP&envs=SFTP_USERS)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/servidor-sftp-dockerizado-con-event-trig?referralCode=DFuuA2&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ### Método Manual (Paso a Paso)
 
