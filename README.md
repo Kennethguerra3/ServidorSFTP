@@ -180,14 +180,27 @@ Los usuarios se crean automáticamente al iniciar el contenedor basándose en la
 
 ### Integración de Scripts (El Trigger)
 
-El archivo `loader.sh` es solo un ejemplo.
+El sistema soporta dos modos de operación para ejecutar lógica cuando llega un archivo:
 
-1. Reemplaza `loader.sh` con tu script real.
-2. El sistema ejecutará tu script automáticamente con estos argumentos:
+#### Opción A: Script Global (Por defecto)
 
-    ```bash
-    ./loader.sh --empresa="EmpresaA" --sede="SedeNorte" --file="/ruta/completa.txt"
-    ```
+Si usas el script que viene en el contenedor (`loader.sh`), este se ejecutará para todos los usuarios.
+
+#### Opción B: Script Personalizado (Por Usuario)
+
+Cada usuario puede subir su PROPIO script para ejecutar sus propias reglas.
+
+1. Conecta por FileZilla con tu usuario.
+2. Verás una carpeta llamada `scripts` (además de `upload`).
+3. Sube tu script con el nombre exacto `loader.sh` dentro de esa carpeta `scripts`.
+4. **¡Listo!** El sistema detectará automáticamente que existe ese archivo y lo usará ESE en lugar del global.
+
+**Argumentos que recibe tu script:**
+El sistema invocará tu script (sea global o personalizado) con estos argumentos:
+
+```bash
+./loader.sh --empresa="EmpresaA" --sede="SedeNorte" --file="/home/.../archivo.txt"
+```
 
 ### Volumen de Persistencia
 Si deseas conservar los archivos subidos tras reiniciar el contenedor, descomenta la línea de volúmenes en `docker-compose.yml`:

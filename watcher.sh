@@ -33,11 +33,22 @@ inotifywait -m -r -e close_write --format '%w%f' "$WATCH_DIR" | while read -r FU
         
         echo " -> Empresa detectada: $EMPRESA"
         echo " -> Sede detectada: $SEDE"
+
+        # Lógica de Override: Buscar script personalizado del usuario
+        USER_SCRIPT="/home/$EMPRESA/scripts/loader.sh"
+        TARGET_SCRIPT="$SCRIPT_TO_TRIGGER" # Por defecto el global
+
+        if [ -f "$USER_SCRIPT" ]; then
+            echo " -> ¡SCRIPT PERSONALIZADO DETECTADO! Usando: $USER_SCRIPT"
+            # Asegurar permisos de ejecución (ya que el usuario lo subió por SFTP y puede no tener +x)
+            chmod +x "$USER_SCRIPT"
+            TARGET_SCRIPT="$USER_SCRIPT"
+        fi
         
         # Verificar permisos de ejecucion del script
-        if [ -x "$SCRIPT_TO_TRIGGER" ]; then
-            echo " -> Ejecutando trigger..."
-            "$SCRIPT_TO_TRIGGER" --empresa="$EMPRESA" --sede="$SEDE" --file="$FULLPATH"
+        if [ -x "$TARGET_SCRIPT" ]; then
+            echo " -> Ejecutando trigger ($TARGET_SCRIPT)..."
+            "$TARGET_SCRIPT" --empresa="$EMPRESA" --sede="$SEDE" --file="$FULLPATH"
             EXIT_CODE=$?
             echo " -> Script finalizado con código: $EXIT_CODE"
         else

@@ -26,13 +26,19 @@ for USER_DATA in "${USERS[@]}"; do
     chown root:root "/home/$USERNAME"
     chmod 755 "/home/$USERNAME"
     
-    # Crear directorio allowtido para escritura (upload)
+    # Crear directorio allowtido para escritura (upload) - Donde suben DATOS
     UPLOAD_DIR="/home/$USERNAME/upload"
     mkdir -p "$UPLOAD_DIR"
     chown "$USERNAME:sftp_users" "$UPLOAD_DIR"
     chmod 755 "$UPLOAD_DIR"
+
+    # Crear directorio para SCRIPTS personalizados (opcional)
+    SCRIPTS_DIR="/home/$USERNAME/scripts"
+    mkdir -p "$SCRIPTS_DIR"
+    chown "$USERNAME:sftp_users" "$SCRIPTS_DIR"
+    chmod 755 "$SCRIPTS_DIR"
     
-    echo "Configurado usuario $USERNAME con directorio de carga en $UPLOAD_DIR"
+    echo "Configurado usuario $USERNAME: upload en $UPLOAD_DIR, scripts en $SCRIPTS_DIR"
 done
 
 echo "Iniciando Watcher en segundo plano..."
