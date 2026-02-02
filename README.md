@@ -202,16 +202,76 @@ El sistema invocará tu script (sea global o personalizado) con estos argumentos
 ./loader.sh --empresa="EmpresaA" --sede="SedeNorte" --file="/home/.../archivo.txt"
 ```
 
-### Volumen de Persistencia
-Si deseas conservar los archivos subidos tras reiniciar el contenedor, descomenta la línea de volúmenes en `docker-compose.yml`:
+## 🐍 Ejemplo de Script Python (Avanzado)
 
-```yaml
-    volumes:
-      - ./sftp_data:/home
+Si deseas usar Python para insertar los datos en SQL Server, este es un código base robusto que puedes usar.
+
+**Requisitos Previos:**
+Para que este script funcione, asegúrate de crear un archivo `Dockerfile` personalizado donde instales los drivers ODBC y Python, o solicita al administrador que los incluya.
+
+Crea un archivo `loader.py` (y llámalo desde `loader.sh`) con este contenido:
+
+```python
+import pyodbc
+import csv
+import os
+import sys
+import argparse
+from datetime import date, datetime
+
+# Configuración de Argumentos (Recibidos del Trigger)
+parser = argparse.ArgumentParser()
+parser.add_argument("--empresa", help="Nombre de la empresa")
+parser.add_argument("--sede", help="Nombre de la sede")
+parser.add_argument("--file", help="Ruta completa del archivo subido")
+args = parser.parse_args()
+
+# Conexión Global (Usar variables de entorno preferiblemente)
+DB_HOST = os.getenv("DB_HOST", "sql.miempresa.com")
+DB_USER = os.getenv("DB_USER", "usuario_sql")
+DB_PASS = os.getenv("DB_PASS", "password_secreto")
+DB_NAME = os.getenv("DB_NAME", "BaseDatosEmpresa")
+
+CONN_STR = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={DB_HOST};DATABASE={DB_NAME};UID={DB_USER};PWD={DB_PASS}"
+
+def connect_db():
+    try:
+        return pyodbc.connect(CONN_STR, autocommit=True)
+    except Exception as e:
+        print(f"❌ Error conectando a BD: {e}")
+        return None
+
+def process_file(file_path, table_name):
+    conn = connect_db()
+    if not conn: return
+
+    print(f"🔄 Procesando {file_path} hacia tabla {table_name}...")
+    
+    # Lógica de lectura CSV e inserción masiva (Fast ExecuteMany)
+    # ... (Aquí iría tu lógica de parsing y limpieza) ...
+    
+    print("✅ Carga completada.")
+    conn.close()
+
+if __name__ == "__main__":
+    print(f"🚀 Iniciando carga para EMPRESA: {args.empresa} - SEDE: {args.sede}")
+    
+    # Determinar qué tabla cargar según el nombre del archivo
+    filename = os.path.basename(args.file).lower()
+    
+    if "ventas" in filename:
+        process_file(args.file, "Ventas")
+    elif "clientes" in filename:
+        process_file(args.file, "Clientes")
+    else:
+        print(f"⚠️ Archivo desconocido: {filename}. No se sabe dónde cargar.")
 ```
 
----
+**Nota para llamar a este Python desde el `loader.sh`:**
+Tu archivo `loader.sh` en la carpeta `scripts` debería verse así:
 
-## 📜 Licencia
-
-Este proyecto está bajo la Licencia MIT.
+```bash
+#!/bin/bash
+# Pasar todos los argumentos al script de Python
+python3 /home/$1/scripts/loader.py "$@"
+```
