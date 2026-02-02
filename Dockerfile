@@ -30,9 +30,10 @@ RUN groupadd sftp_users
 # Copiar scripts
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY watcher.sh /usr/local/bin/watcher.sh
+COPY loader.sh /usr/local/bin/loader.sh
 
 # Dar permisos de ejecución
-RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/watcher.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/watcher.sh /usr/local/bin/loader.sh
 
 # Exponer puerto SSH
 EXPOSE 22
