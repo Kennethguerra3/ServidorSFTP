@@ -120,12 +120,22 @@ Este proyecto está optimizado para funcionar nativamente en Railway.
 
 ### Cómo Conectar (Cliente SFTP)
 
+**⚠️ ATENCIÓN: MUY IMPORTANTE**
+Railway te da una dirección completa como `switchback.proxy.rlwy.net:42064`.
+Para conectarte en FileZilla, debes **SEPARAR** los datos. **NO** pegues todo en el campo de servidor.
+
+Sigue este ejemplo exacto:
+
+* **Servidor/Host**: `switchback.proxy.rlwy.net` (Solo las letras)
+* **Puerto**: `42064` (Solo los números del final)
+
 | Dato | Valor (Ejemplo) | Notas |
 | :--- | :--- | :--- |
-| **Host** | `roundhouse.proxy.rlwy.net` | Copiar del TCP Proxy en Railway |
-| **Puerto** | `41092` | El puerto PÚBLICO que te dio el Proxy |
-| **Usuario** | `EmpresaA` | Según tu variable `SFTP_USERS` |
-| **Pass** | `pass123` | Según tu variable `SFTP_USERS` |
+| **Protocolo** | `SFTP` | Selecciona SFTP - SSH File Transfer Protocol |
+| **Servidor** | `roundhouse.proxy.rlwy.net` | **SOLO** el dominio, sin el puerto dos puntos |
+| **Puerto** | `41092` | El puerto numérico va en su propia casilla |
+| **Usuario** | `EmpresaA` | El que definiste en Variables |
+| **Contraseña** | `...` | La que definiste en Variables |
 
 ### 4. Guardar Archivos (Persistencia)
 
