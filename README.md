@@ -94,51 +94,86 @@ Detectado nuevo archivo: /home/EmpresaA/upload/SedeCentral/data.txt
 
 ---
 
-## ☁️ Despliegue en Railway
+## ☁️ Despliegue en Railway (Recomendado)
 
-Este proyecto es totalmente compatible con Railway. Sigue estos pasos para configurarlo:
+Este proyecto está optimizado para funcionar nativamente en Railway.
 
-### 1. Variables de Entorno
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/Kennethguerra3/ServidorSFTP&envs=SFTP_USERS)
 
-En el panel de tu proyecto en Railway, ve a la pestaña **Variables** y agrega la siguiente clave:
+### Método Manual (Paso a Paso)
 
-* **Clave**: `SFTP_USERS`
-* **Valor**: `EmpresaA:pass123;EmpresaB:pass456`
+1. **Nuevo Proyecto**: En Railway, selecciona "Deploy from GitHub repo" y elige este repositorio.
+2. **Variables de Entorno (OBLIGATORIO)**:
+    * El servicio NO arrancará correctamente sin usuarios definidos.
+    * Ve a la pestaña **Variables** y añade:
+        * `SFTP_USERS` = `EmpresaA:pass123;EmpresaB:pass456`
+3. **Configurar Puerto (Networking)**:
+    * Por defecto, SFTP no usa HTTP. Necesitas un **TCP Proxy**.
+    * Ve a **Settings** -> **Networking** -> **Public Networking**.
+    * Haz clic en **TCP Proxy**.
+    * Railway te asignará un dominio (ej. `roundhouse.proxy.rlwy.net`) y un puerto público (ej. `54321`).
+    * **IMPORTANTE**: Este es el puerto que usarás en FileZilla, NO el 22.
 
-*(Asegúrate de no dejar espacios entre los usuarios).*
+### Cómo Conectar (Cliente SFTP)
 
-### 2. Networking (TCP Proxy)
+| Dato | Valor (Ejemplo) | Notas |
+| :--- | :--- | :--- |
+| **Host** | `roundhouse.proxy.rlwy.net` | Copiar del TCP Proxy en Railway |
+| **Puerto** | `54321` | Copiar del TCP Proxy en Railway |
+| **Usuario** | `EmpresaA` | Según tu variable `SFTP_USERS` |
+| **Pass** | `pass123` | Según tu variable `SFTP_USERS` |
 
-El protocolo SFTP no funciona con dominios web normales (HTTP/HTTPS). Debes crear un Proxy TCP.
+### 4. Guardar Archivos (Persistencia)
 
-1. Ve a la pestaña **Settings** -> **Networking** (o directamente en la tarjeta del servicio).
-2. Busca la sección "Public Networking".
-3. Haz clic en **TCP Proxy**.
-4. Railway te generará una dirección y un puerto, por ejemplo:
-    * **Domain**: `roundhouse.proxy.rlwy.net`
-    * **Port**: `54321`
+Si reinicias el servidor en Railway, los archivos subidos se borrarán si no configuras un "Volumen".
 
-### 3. Conexión
-
-Usa esos datos en tu cliente SFTP:
-
-* **Host**: `roundhouse.proxy.rlwy.net`
-* **Puerto**: `54321` (El puerto que te dio el TCP Proxy, NO el 22 ni el 2222).
-* **Usuario**: `EmpresaA`
-* **Password**: `pass123`
+1. En Railway, haz clic en tu servicio.
+2. Ve a la pestaña **Volumes**.
+3. Haz clic en el botón **Add Volume** (o `+`).
+4. Escribe `/home` donde dice "Mount Path".
+5. Dale a guardar/Add. Railway reiniciará el servicio y ahora tus archivos estarán seguros.
 
 ---
 
-## 🔧 Personalización
+## 🏠 Desarrollo Local (En tu PC)
 
-### Script de Carga (Loader)
-El archivo `loader.sh` incluido es un **MOCK** para demostración.
-Para producción:
-1.  Reemplaza `loader.sh` con tu script real (Python, Bash, Node, etc.).
-2.  Asegúrate de que tu script acepte los siguientes argumentos:
-    *   `--empresa="NombreEmpresa"`
-    *   `--sede="NombreSede"`
-    *   `--file="/ruta/completa/archivo.ext"`
+Instrucciones para probarlo en tu computadora antes de subirlo:
+
+1. Clonar el repositorio.
+2. Editar `docker-compose.yml` si quieres cambiar usuarios de prueba.
+3. Ejecutar:
+
+    ```bash
+    docker-compose up --build
+    ```
+
+4. Conectar usando `localhost` y puerto `2222`.
+
+**Nota sobre Volúmenes en Local**:
+El archivo `docker-compose.yml` ya tiene listo el volumen. Solo descomenta la línea que dice `- ./sftp_data:/home` si quieres ver los archivos en una carpeta de Windows.
+
+---
+
+## 🔧 Personalización Avanzada
+
+### Usuarios y Permisos
+
+Los usuarios se crean automáticamente al iniciar el contenedor basándose en la variable `SFTP_USERS`.
+
+* Formato: `USER:PASS;USER2:PASS2`
+* Cada usuario es "enjaulado" (Chroot) en `/home/{usuario}`.
+* Se crea automáticamente una carpeta `/home/{usuario}/upload` con permisos de escritura.
+
+### Integración de Scripts (El Trigger)
+
+El archivo `loader.sh` es solo un ejemplo.
+
+1. Reemplaza `loader.sh` con tu script real.
+2. El sistema ejecutará tu script automáticamente con estos argumentos:
+
+    ```bash
+    ./loader.sh --empresa="EmpresaA" --sede="SedeNorte" --file="/ruta/completa.txt"
+    ```
 
 ### Volumen de Persistencia
 Si deseas conservar los archivos subidos tras reiniciar el contenedor, descomenta la línea de volúmenes en `docker-compose.yml`:
