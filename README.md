@@ -107,19 +107,23 @@ Este proyecto está optimizado para funcionar nativamente en Railway.
     * El servicio NO arrancará correctamente sin usuarios definidos.
     * Ve a la pestaña **Variables** y añade:
         * `SFTP_USERS` = `EmpresaA:pass123;EmpresaB:pass456`
-3. **Configurar Puerto (Networking)**:
-    * Por defecto, SFTP no usa HTTP. Necesitas un **TCP Proxy**.
-    * Ve a **Settings** -> **Networking** -> **Public Networking**.
-    * Haz clic en **TCP Proxy**.
-    * Railway te asignará un dominio (ej. `roundhouse.proxy.rlwy.net`) y un puerto público (ej. `54321`).
-    * **IMPORTANTE**: Este es el puerto que usarás en FileZilla, NO el 22.
+3. **Configurar Puertos (CRÍTICO)**:
+    * **Paso A (Variable PORT)**:
+        * Ve a **Variables** en Railway y agrega `PORT` = `22`.
+        * *Explicación*: Esto le dice a Railway que el tráfico interno debe ir al puerto 22 (SSH).
+    * **Paso B (TCP Proxy)**:
+        * Por defecto, SFTP no usa HTTP. Necesitas un **TCP Proxy**.
+        * Ve a **Settings** -> **Networking** -> **Public Networking**.
+        * Haz clic en **TCP Proxy**.
+        * Railway te asignará un dominio (ej. `roundhouse.proxy.rlwy.net`) y un puerto público (ej. `41092`).
+        * **IMPORTANTE**: En FileZilla usa el puerto público (`41092` en este ejemplo), NO el 22.
 
 ### Cómo Conectar (Cliente SFTP)
 
 | Dato | Valor (Ejemplo) | Notas |
 | :--- | :--- | :--- |
 | **Host** | `roundhouse.proxy.rlwy.net` | Copiar del TCP Proxy en Railway |
-| **Puerto** | `54321` | Copiar del TCP Proxy en Railway |
+| **Puerto** | `41092` | El puerto PÚBLICO que te dio el Proxy |
 | **Usuario** | `EmpresaA` | Según tu variable `SFTP_USERS` |
 | **Pass** | `pass123` | Según tu variable `SFTP_USERS` |
 
