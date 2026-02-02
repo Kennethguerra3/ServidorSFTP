@@ -94,6 +94,41 @@ Detectado nuevo archivo: /home/EmpresaA/upload/SedeCentral/data.txt
 
 ---
 
+## ☁️ Despliegue en Railway
+
+Este proyecto es totalmente compatible con Railway. Sigue estos pasos para configurarlo:
+
+### 1. Variables de Entorno
+
+En el panel de tu proyecto en Railway, ve a la pestaña **Variables** y agrega la siguiente clave:
+
+* **Clave**: `SFTP_USERS`
+* **Valor**: `EmpresaA:pass123;EmpresaB:pass456`
+
+*(Asegúrate de no dejar espacios entre los usuarios).*
+
+### 2. Networking (TCP Proxy)
+
+El protocolo SFTP no funciona con dominios web normales (HTTP/HTTPS). Debes crear un Proxy TCP.
+
+1. Ve a la pestaña **Settings** -> **Networking** (o directamente en la tarjeta del servicio).
+2. Busca la sección "Public Networking".
+3. Haz clic en **TCP Proxy**.
+4. Railway te generará una dirección y un puerto, por ejemplo:
+    * **Domain**: `roundhouse.proxy.rlwy.net`
+    * **Port**: `54321`
+
+### 3. Conexión
+
+Usa esos datos en tu cliente SFTP:
+
+* **Host**: `roundhouse.proxy.rlwy.net`
+* **Puerto**: `54321` (El puerto que te dio el TCP Proxy, NO el 22 ni el 2222).
+* **Usuario**: `EmpresaA`
+* **Password**: `pass123`
+
+---
+
 ## 🔧 Personalización
 
 ### Script de Carga (Loader)
